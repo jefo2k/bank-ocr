@@ -57,7 +57,6 @@ function scanDigit(str) {
   if (uniques.length === 1) {
     return uniques[0].digit
   }
-
   return null
 }
 

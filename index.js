@@ -59,11 +59,14 @@ function scanDigit(str) {
 }
 
 function scan(text) {
-  var digits = []
+  var result = []
   for(var i = 0; i < 9; i++) {
-    var digit = text.substring(0, 3)
+    var digitLine1 = text.substring(i * 3, i * 3 + 3)
+    var digitLine2 = text.substring(i * 3 + 28, i * 3 + 31)
+    var digitLine3 = text.substring(i * 3 + 56, i * 3 + 59)
+    result.push(scanDigit(digitLine1 + digitLine2 + digitLine3))
   }
-  return [1,2,3,1,2,3,1,2,3]
+  return result
 }
 
 module.exports = {

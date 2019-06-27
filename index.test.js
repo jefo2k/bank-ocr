@@ -82,9 +82,12 @@ describe('bank ocr',  function () {
   })
 
   it('should scan line', function() {
-    var ocrTest = createOcrString([one, two, three, one, two, three, one, two, three])
+    var ocrTest = createOcrString([one, two, three, four, five, six, seven, eight, nine])
     console.log(ocrTest)
-    expect(ocr.scan(ocrTest)).to.eql([1,2,3,1,2,3,1,2,3])
+    expect(ocr.scan(ocrTest)).to.eql([1,2,3,4,5,6,7,8,9])
+    var ocrTest = createOcrString([zero, zero, six, six, six, six, seven, seven, eight])
+    console.log(ocrTest)
+    expect(ocr.scan(ocrTest)).to.eql([0,0,6,6,6,6,7,7,8])
   })
 })
 

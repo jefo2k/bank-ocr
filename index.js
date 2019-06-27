@@ -62,18 +62,28 @@ function scanDigit(str) {
 
 function scan(text) {
   var result = []
+  let ill = false
   for(var i = 0; i < 9; i++) {
     var digitLine1 = text.substring(i * 3, i * 3 + 3)
     var digitLine2 = text.substring(i * 3 + 28, i * 3 + 31)
     var digitLine3 = text.substring(i * 3 + 56, i * 3 + 59)
     result.push(scanDigit(digitLine1 + digitLine2 + digitLine3))
   }
-  return result
+  let resultString = result.map((value) => (value != null) ? `${value}` : '?').join('')
+  let check = checksum(result)
+  if (check > 0) {
+    resultString+= ' ERR'
+  }
+  if (check === -1) {
+    resultString+= ' ILL'
+  }
+  return resultString
 }
 
 function checksum(digits) {
   let checksum = 0
   for (var i = 0; i< digits.length; i++) {
+    if (digits[i] == null) return -1
     checksum += digits[(digits.length - 1 - i)] * (i + 1)
   }
   return checksum % 11

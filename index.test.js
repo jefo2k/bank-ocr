@@ -89,5 +89,9 @@ describe('bank ocr',  function () {
     console.log(ocrTest)
     expect(ocr.scan(ocrTest)).to.eql([0,0,6,6,6,6,7,7,8])
   })
+
+  it('should calculate checksum', function() {
+    expect(ocr.checksum([3,4,5,8,8,2,8,6,5])).to.equal(0)
+  })
 })
 

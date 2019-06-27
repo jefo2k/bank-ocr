@@ -71,8 +71,17 @@ function scan(text) {
   return result
 }
 
+function checksum(digits) {
+  let checksum = 0
+  for (var i = 0; i< digits.length; i++) {
+    checksum += digits[(digits.length - 1 - i)] * (i + 1)
+  }
+  return checksum % 11
+}
+
 module.exports = {
   ocr,
   scanDigit,
-  scan
+  scan,
+  checksum
 }

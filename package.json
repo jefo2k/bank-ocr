@@ -1,0 +1,16 @@
+{
+  "name": "jun19-chall01",
+  "version": "1.0.0",
+  "description": "pachydevs challenge 01 coding dojo jun19",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha *.test.js --watch",
+    "test:min": "mocha *.test.js --watch --reporter min"
+  },
+  "author": "Jefo",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}

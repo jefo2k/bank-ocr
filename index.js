@@ -3,71 +3,95 @@ function ocr(str) {
 }
 
 function scanDigit(str) {
-  const zero =  " _ " + 
-                "| |" + 
-                "|_|"
+  let digitsNonWhiteSpace = [
+    {'digit': 0, 'nonWhites': 6, 'uniques': [
+      {'index': 4, 'char': ' '}, 
+      {'index': 5, 'char': '|'}, 
+      {'index': 6, 'char': '|'}]},
+    {'digit': 1, 'nonWhites': 2, 'uniques': []},
+    {'digit': 2, 'nonWhites': 5, 'uniques': [
+      {'index': 3, 'char': ' '}, 
+      {'index': 5, 'char': '|'}, 
+      {'index': 6, 'char': '|'}, 
+      {'index': 8, 'char': ' '}]},
+    {'digit': 3, 'nonWhites': 5, 'uniques': [
+      {'index': 3, 'char': ' '}, 
+      {'index': 5, 'char': '|'}, 
+      {'index': 6, 'char': ' '}, 
+      {'index': 8, 'char': '|'}]},
+    {'digit': 4, 'nonWhites': 4, 'uniques': []},
+    {'digit': 5, 'nonWhites': 5, 'uniques': [
+      {'index': 3, 'char': '|'}, 
+      {'index': 5, 'char': ' '}, 
+      {'index': 6, 'char': ' '}, 
+      {'index': 8, 'char': '|'}]},
+    {'digit': 6, 'nonWhites': 6, 'uniques': [
+      {'index': 4, 'char': '_'}, 
+      {'index': 5, 'char': ' '}, 
+      {'index': 6, 'char': '|'}]},
+    {'digit': 7, 'nonWhites': 3, 'uniques': []},
+    {'digit': 8, 'nonWhites': 7, 'uniques': []},
+    {'digit': 9, 'nonWhites': 6, 'uniques': [
+      {'index': 4, 'char': '_'}, 
+      {'index': 5, 'char': '|'}, 
+      {'index': 6, 'char': ' '}]},
+  ]
 
-  const one =   "   " + 
-                "  |" + 
-                "  |"
+  let nonWhites = (str.match(/[\|\_]/g)||[]).length
+  let possibleValues = digitsNonWhiteSpace.filter(function(digit) {
+    return digit.nonWhites === nonWhites
+  })
+  if (possibleValues.length === 1) {
+    return possibleValues[0].digit
+  }
+  let uniques = possibleValues.filter(function(possible) {
+    let perfectFit = true
+    for (var i = 0; i < possible.uniques.length; i++) {
+      let diffChar = possible.uniques[i].char
+      let digitChar = str.charAt(possible.uniques[i].index)
+      perfectFit = perfectFit && (diffChar === digitChar)
+    }
+    return perfectFit
+  })
 
-  const two =   " _ " + 
-                " _|" + 
-                "|_ "
-
-  const three = " _ " + 
-                " _|" + 
-                " _|"
-
-  const four =  "   " + 
-                "|_|" + 
-                "  |"
-
-  const five =  " _ " + 
-                "|_ " + 
-                " _|"
-
-  const six =   " _ " + 
-                "|_ " + 
-                "|_|"
-
-  const seven = " _ " + 
-                "  |" + 
-                "  |"
-
-  const eight = " _ " + 
-                "|_|" + 
-                "|_|"
-
-  const nine =  " _ " + 
-                "|_|" + 
-                " _|"
-
-  let digits = []
-  digits[zero] = 0
-  digits[one] = 1
-  digits[two] = 2
-  digits[three] = 3
-  digits[four] = 4
-  digits[five] = 5
-  digits[six] = 6
-  digits[seven] = 7
-  digits[eight] = 8
-  digits[nine] = 9
-
-  return digits[str]
+  if (uniques.length === 1) {
+    return uniques[0].digit
+  }
+  return null
 }
 
 function scan(text) {
-  var digits = []
+  var result = []
+  let ill = false
   for(var i = 0; i < 9; i++) {
-    var digit = text.substring(0, 3)
+    var digitLine1 = text.substring(i * 3, i * 3 + 3)
+    var digitLine2 = text.substring(i * 3 + 28, i * 3 + 31)
+    var digitLine3 = text.substring(i * 3 + 56, i * 3 + 59)
+    result.push(scanDigit(digitLine1 + digitLine2 + digitLine3))
   }
-  return [1,2,3,1,2,3,1,2,3]
+  let resultString = result.map((value) => (value != null) ? `${value}` : '?').join('')
+  let check = checksum(result)
+  if (check > 0) {
+    resultString+= ' ERR'
+  }
+  if (check === -1) {
+    resultString+= ' ILL'
+  }
+  return resultString
+}
+
+function checksum(digits) {
+  let checksum = 0
+  for (var i = 0; i< digits.length; i++) {
+    if (digits[i] == null) return -1
+    checksum += digits[(digits.length - 1 - i)] * (i + 1)
+  }
+  return checksum % 11
 }
 
 module.exports = {
   ocr,
   scanDigit,
-  scan
+  scan,
+  checksum
 }

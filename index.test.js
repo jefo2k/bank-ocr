@@ -81,10 +81,53 @@ describe('bank ocr',  function () {
     })
   })
 
-  it('should scan line', function() {
-    var ocrTest = createOcrString([one, two, three, one, two, three, one, two, three])
-    console.log(ocrTest)
-    expect(ocr.scan(ocrTest)).to.eql([1,2,3,1,2,3,1,2,3])
+  const validatedLines = [
+    {'line': createOcrString([three, four, five, eight, eight, two, eight, six, five]), 'result': '345882865'},
+    {'line': createOcrString([four, five, seven, five, zero, eight, zero, zero, zero]), 'result': '457508000'},
+  ]
+
+  it('should scan validated lines', function() {
+    validatedLines.forEach((line) => {
+      console.log(line.line)
+      expect(ocr.scan(line.line)).to.equal(line.result)
+    })
+  })
+
+  it('should calculate checksum', function() {
+    expect(ocr.checksum([3,4,5,8,8,2,8,6,5])).to.equal(0)
+    expect(ocr.checksum([3,4,5,8,8,2,8,6,7])).not.equal(0)
+  })
+
+  const errLines = [
+    {'line': createOcrString([one, two, three, four, five, six, seven, eight, eight]), 'result': '123456788 ERR'},
+    {'line': createOcrString([zero, zero, six, six, six, six, seven, seven, seven]), 'result': '006666777 ERR'},
+  ]
+
+  it('should display ERR for checksum errors', function() {
+    errLines.forEach((line) => {
+      console.log(line.line)
+      expect(ocr.scan(line.line)).to.equal(line.result)
+    })
+  })
+
+  const illLines = [
+    {'line': createOcrString([
+      "___" + 
+      "___" + 
+      "___", 
+      two, three, four, five, six, seven, eight, eight]), 'result': '?23456788 ILL'},
+    {'line': createOcrString([zero, zero, six, six, six, six, 
+      "|_|" + 
+      "|_|" + 
+      "|_|", 
+      , seven, seven]), 'result': '006666?77 ILL'},
+  ]
+
+  it('should display ILL for checksum errors', function() {
+    illLines.forEach((line) => {
+      console.log(line.line)
+      expect(ocr.scan(line.line)).to.equal(line.result)
+    })
   })
 })
 
